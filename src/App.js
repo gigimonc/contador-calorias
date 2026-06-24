@@ -174,6 +174,10 @@ export default function ContadorCalorias() {
   var inputRef = useRef(null);
   var photoInputRef = useRef(null);
   var cameraInputRef = useRef(null);
+  var _usStateP1 = useState(false); var showPhotoModal = _usStateP1[0]; var setShowPhotoModal = _usStateP1[1];
+  var _usStateP2 = useState(false); var photoLoading = _usStateP2[0]; var setPhotoLoading = _usStateP2[1];
+  var _usStateP3 = useState(null); var photoPreview = _usStateP3[0]; var setPhotoPreview = _usStateP3[1];
+  var _usStateP4 = useState(""); var photoError = _usStateP4[0]; var setPhotoError = _usStateP4[1];
 
   useEffect(function() {
     var key = getTodayKey();

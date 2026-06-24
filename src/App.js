@@ -172,6 +172,8 @@ export default function ContadorCalorias() {
   var dailyGoal = 2400;
   var proteinGoal = 133;
   var inputRef = useRef(null);
+  var photoInputRef = useRef(null);
+  var cameraInputRef = useRef(null);
 
   useEffect(function() {
     var key = getTodayKey();

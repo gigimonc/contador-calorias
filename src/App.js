@@ -169,15 +169,9 @@ export default function ContadorCalorias() {
   var _useState24 = useState(""); var calcError = _useState24[0]; var setCalcError = _useState24[1];
   var _useState25 = useState(""); var calcSearch = _useState25[0]; var setCalcSearch = _useState25[1];
   var _useState26 = useState(null); var calcSelected = _useState26[0]; var setCalcSelected = _useState26[1];
-  var _useState27 = useState(false); var photoLoading = _useState27[0]; var setPhotoLoading = _useState27[1];
-  var _useState28 = useState(null); var photoPreview = _useState28[0]; var setPhotoPreview = _useState28[1];
-  var _useState29 = useState(""); var photoError = _useState29[0]; var setPhotoError = _useState29[1];
-  var _useState30 = useState(false); var showPhotoModal = _useState30[0]; var setShowPhotoModal = _useState30[1];
   var dailyGoal = 2400;
   var proteinGoal = 133;
   var inputRef = useRef(null);
-  var photoInputRef = useRef(null);
-  var cameraInputRef = useRef(null);
 
   useEffect(function() {
     var key = getTodayKey();
@@ -275,6 +269,7 @@ export default function ContadorCalorias() {
     return days.sort(function(a, b) { return b.dateKey.localeCompare(a.dateKey); });
   }
 
+
   function analyzePhoto(file) {
     if (!file) return;
     setPhotoLoading(true); setPhotoError("");
@@ -283,12 +278,12 @@ export default function ContadorCalorias() {
       var base64 = e.target.result.split(",")[1];
       var mediaType = file.type || "image/jpeg";
       setPhotoPreview(e.target.result);
-      fetch("https://api.anthropic.com/v1/messages", {
+      fetch("/api/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-6", max_tokens: 1000,
-          system: "Eres nutricionista. Analiza la imagen. Responde SOLO JSON sin markdown: {\"name\":\"platillo\",\"calories\":numero,\"protein\":numero,\"carbs\":numero,\"fat\":numero,\"portion\":\"porcion\",\"ingredients\":[\"ing\"],\"tip\":\"consejo\"}. Si no hay comida: {\"error\":\"No identifico alimentos\"}",
+          system: "Eres nutricionista. Analiza la imagen. Responde SOLO JSON sin markdown: {"name":"platillo","calories":numero,"protein":numero,"carbs":numero,"fat":numero,"portion":"porcion","ingredients":["ing"],"tip":"consejo"}. Si no hay comida: {"error":"No identifico alimentos"}",
           messages: [{ role: "user", content: [
             { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
             { type: "text", text: "Analiza este platillo" }
@@ -314,7 +309,7 @@ export default function ContadorCalorias() {
     var trimmed = input.trim();
     if (!trimmed) return;
     setLoading(true); setError("");
-    fetch("https://api.anthropic.com/v1/messages", {
+    fetch("/api/claude", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -338,9 +333,9 @@ export default function ContadorCalorias() {
   function calcWithAI() {
     if (!calcFood.trim() || !calcAmount || parseFloat(calcAmount) <= 0) return;
     setCalcLoading(true); setCalcError(""); setCalcResult(null);
-    fetch("https://api.anthropic.com/v1/messages", {
+    fetch("/api/claude", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-api-key": process.env.REACT_APP_ANTHROPIC_KEY, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-ipc": "true" },
       body: JSON.stringify({
         model: "claude-sonnet-4-6", max_tokens: 500,
         system: "Eres nutricionista. Calcula macros para la cantidad dada. Responde SOLO JSON sin markdown: {\"name\":\"nombre\",\"amount\":numero,\"unit\":\"g o ml\",\"calories\":numero,\"protein\":numero,\"carbs\":numero,\"fat\":numero,\"per100\":numero}. Si no reconoces: {\"error\":\"No reconozco\"}",
@@ -433,7 +428,6 @@ export default function ContadorCalorias() {
 
   return (
     <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "'Segoe UI',system-ui,sans-serif", color: C.text }}>
-
       <input ref={photoInputRef} type="file" accept="image/*" style={{ display: "none" }}
         onChange={function(e) { if (e.target.files[0]) { setShowPhotoModal(true); analyzePhoto(e.target.files[0]); e.target.value = ""; } }} />
       <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" style={{ display: "none" }}
@@ -441,18 +435,18 @@ export default function ContadorCalorias() {
 
       {showPhotoModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: C.surface, borderRadius: 20, padding: "24px 20px", width: "100%", maxWidth: 440, textAlign: "center" }}>
+          <div style={{ background: "#fff", borderRadius: 20, padding: "24px 20px", width: "100%", maxWidth: 440, textAlign: "center" }}>
             <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 14 }}>Analizando platillo...</div>
             {photoPreview && <img src={photoPreview} alt="platillo" style={{ width: "100%", maxHeight: 200, objectFit: "cover", borderRadius: 12, marginBottom: 14 }} />}
-            {photoLoading && <p style={{ color: C.muted, fontSize: 13 }}>Identificando ingredientes...</p>}
+            {photoLoading && <p style={{ color: "#6B7280", fontSize: 13 }}>Identificando ingredientes y estimando calorias...</p>}
             {photoError && (
               <div>
-                <p style={{ color: C.danger, fontSize: 13, marginBottom: 10 }}>{photoError}</p>
+                <p style={{ color: "#E63946", fontSize: 13, marginBottom: 10 }}>{photoError}</p>
                 <button onClick={function() { setShowPhotoModal(false); setPhotoPreview(null); setPhotoError(""); }}
-                  style={{ background: C.border, border: "none", borderRadius: 10, padding: "9px 20px", cursor: "pointer" }}>Cerrar</button>
+                  style={{ background: "#E5E7EB", border: "none", borderRadius: 10, padding: "9px 20px", cursor: "pointer" }}>Cerrar</button>
               </div>
             )}
-            {!photoLoading && !photoError && <p style={{ color: C.success, fontWeight: 700 }}>Platillo agregado!</p>}
+            {!photoLoading && !photoError && <p style={{ color: "#52B788", fontWeight: 700 }}>Platillo agregado al registro!</p>}
           </div>
         </div>
       )}
@@ -725,9 +719,9 @@ export default function ContadorCalorias() {
                     <label style={{ fontSize: 10, fontWeight: 700, color: mt.color, textTransform: "uppercase", letterSpacing: "0.05em" }}>{mt.emoji} Agregar a {mt.label}</label>
                     <div style={{ display: "flex", gap: 5 }}>
                       <button onClick={function() { if (photoInputRef.current) photoInputRef.current.click(); }}
-                        style={{ background: "#F0FDF4", border: "1.5px solid #52B788", borderRadius: 7, padding: "4px 8px", fontSize: 12, cursor: "pointer", color: C.primary, fontWeight: 700 }}>Galeria</button>
+                        style={{ background: "#F0FDF4", border: "1.5px solid #52B788", borderRadius: 7, padding: "4px 8px", fontSize: 12, cursor: "pointer", color: "#2D6A4F", fontWeight: 700 }}>Galeria</button>
                       <button onClick={function() { if (cameraInputRef.current) cameraInputRef.current.click(); }}
-                        style={{ background: "#F0FDF4", border: "1.5px solid #52B788", borderRadius: 7, padding: "4px 8px", fontSize: 12, cursor: "pointer", color: C.primary, fontWeight: 700 }}>Camara</button>
+                        style={{ background: "#F0FDF4", border: "1.5px solid #52B788", borderRadius: 7, padding: "4px 8px", fontSize: 12, cursor: "pointer", color: "#2D6A4F", fontWeight: 700 }}>Camara</button>
                     </div>
                   </div>
                 );
@@ -767,7 +761,7 @@ export default function ContadorCalorias() {
                             <div style={{ flex: 1 }}>
                               <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2, display: "flex", alignItems: "center", gap: 5 }}>
                                 {dish.name}
-                                {dish.fromPhoto && <span style={{ fontSize: 9, background: C.primaryLight, color: "#fff", borderRadius: 5, padding: "1px 5px" }}>foto</span>}
+                                {dish.fromPhoto && <span style={{ fontSize: 9, background: "#52B788", color: "#fff", borderRadius: 5, padding: "1px 5px", marginLeft: 4 }}>foto</span>}
                               </div>
                               <div style={{ fontSize: 10, color: C.muted, marginBottom: 5 }}>Porcion: {dish.portion}</div>
                               <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>

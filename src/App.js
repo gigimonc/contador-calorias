@@ -1,39 +1,3 @@
-import { useState, useRef, useEffect } from "react";
-
-const COLORS = {
-  bg: "#F7F5F0", surface: "#FFFFFF", primary: "#2D6A4F",
-  primaryLight: "#52B788", accent: "#F4A261", text: "#1A1A2E",
-  muted: "#6B7280", border: "#E5E7EB", danger: "#E63946", success: "#52B788",
-};
-
-const MEAL_TIMES = [
-  { id: "desayuno", label: "Desayuno", emoji: "🌅", color: "#F59E0B" },
-  { id: "almuerzo", label: "Almuerzo", emoji: "☀️", color: "#2D6A4F" },
-  { id: "cena", label: "Cena", emoji: "🌙", color: "#6366F1" },
-  { id: "snack", label: "Snack", emoji: "🍎", color: "#EC4899" },
-];
-
-const EXERCISE_TYPES = [
-  { id: "funcional", label: "Ejercicio funcional", emoji: "🏋️", cal_per_min: 8 },
-  { id: "caminata", label: "Caminata", emoji: "🚶", cal_per_min: 4 },
-  { id: "correr", label: "Correr", emoji: "🏃", cal_per_min: 11 },
-  { id: "ciclismo", label: "Ciclismo", emoji: "🚴", cal_per_min: 9 },
-  { id: "nadar", label: "Natación", emoji: "🏊", cal_per_min: 10 },
-  { id: "yoga", label: "Yoga / Pilates", emoji: "🧘", cal_per_min: 4 },
-  { id: "hiit", label: "HIIT", emoji: "⚡", cal_per_min: 13 },
-  { id: "otro", label: "Otro", emoji: "🏅", cal_per_min: 6 },
-];
-
-const HIGH_PROTEIN_FOODS = [
-  { name: "Pechuga de pollo", emoji: "🍗", protein: 31, cal: 165, per: "100g" },
-  { name: "Atún en agua", emoji: "🐟", protein: 30, cal: 132, per: "100g" },
-  { name: "Huevo entero", emoji: "🥚", protein: 6, cal: 78, per: "1 pieza" },
-  { name: "Claras de huevo", emoji: "🍳", protein: 11, cal: 52, per: "3 claras" },
-  { name: "Yogur griego", emoji: "🥛", protein: 17, cal: 100, per: "1 taza" },
-  { name: "Frijoles negros", emoji: "🫘", protein: 15, cal: 227, per: "1 taza cocida" },
-  { name: "Salmón", emoji: "🐠", protein: 25, cal: 208, per: "100g" },
-  { name: "Queso cottage", emoji: "🧀", protein: 14, cal: 110, per: "½ taza" },
-  { name: "Pavo molido", emoji: "🦃", protein: 29, cal: 189, per: "100g" },
   { name: "Edamame", emoji: "🌱", protein: 17, cal: 188, per: "1 taza" },
   { name: "Lentejas", emoji: "🍲", protein: 18, cal: 230, per: "1 taza cocida" },
   { name: "Camarón", emoji: "🦐", protein: 24, cal: 99, per: "100g" },

@@ -335,7 +335,7 @@ export default function ContadorCalorias() {
     setCalcLoading(true); setCalcError(""); setCalcResult(null);
     fetch("/api/claude", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": process.env.REACT_APP_ANTHROPIC_KEY, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-ipc": "true" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "claude-sonnet-4-6", max_tokens: 500,
         system: "Eres nutricionista. Calcula macros para la cantidad dada. Responde SOLO JSON sin markdown: {\"name\":\"nombre\",\"amount\":numero,\"unit\":\"g o ml\",\"calories\":numero,\"protein\":numero,\"carbs\":numero,\"fat\":numero,\"per100\":numero}. Si no reconoces: {\"error\":\"No reconozco\"}",

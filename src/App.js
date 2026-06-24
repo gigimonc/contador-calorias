@@ -283,7 +283,7 @@ export default function ContadorCalorias() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-6", max_tokens: 1000,
-          system: "Eres nutricionista. Analiza la imagen. Responde SOLO JSON sin markdown: {"name":"platillo","calories":numero,"protein":numero,"carbs":numero,"fat":numero,"portion":"porcion","ingredients":["ing"],"tip":"consejo"}. Si no hay comida: {"error":"No identifico alimentos"}",
+          system: "Eres nutricionista. Analiza la imagen. Responde SOLO JSON sin markdown: {name:platillo,calories:numero,protein:numero,carbs:numero,fat:numero,portion:porcion,ingredients:[ing],tip:consejo}. Si no hay comida: {error:No identifico alimentos}",
           messages: [{ role: "user", content: [
             { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
             { type: "text", text: "Analiza este platillo" }

@@ -1,4 +1,6 @@
-export default async function handler(req, res) {
+const fetch = require("node-fetch");
+
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -20,4 +22,4 @@ export default async function handler(req, res) {
   } catch (err) {
     res.status(500).json({ error: "Error al conectar con la IA" });
   }
-}
+};

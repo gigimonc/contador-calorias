@@ -25,18 +25,18 @@ const EXERCISE_TYPES = [
 ];
 
 const HIGH_PROTEIN_FOODS = [
-  { name: "Pechuga de pollo", emoji: "\uD83C\uDF57", protein: 31, cal: 165, per: "100g" },
-  { name: "Atun en agua", emoji: "\uD83D\uDC1F", protein: 30, cal: 132, per: "100g" },
-  { name: "Huevo entero", emoji: "\uD83E\uDD5A", protein: 6, cal: 78, per: "1 pieza" },
-  { name: "Claras de huevo", emoji: "\uD83C\uDF73", protein: 11, cal: 52, per: "3 claras" },
-  { name: "Yogur griego", emoji: "\uD83E\uDD5B", protein: 17, cal: 100, per: "1 taza" },
-  { name: "Frijoles negros", emoji: "\uD83E\uDEB8", protein: 15, cal: 227, per: "1 taza cocida" },
-  { name: "Salmon", emoji: "\uD83D\uDC20", protein: 25, cal: 208, per: "100g" },
-  { name: "Queso cottage", emoji: "\uD83E\uDDC0", protein: 14, cal: 110, per: "1/2 taza" },
-  { name: "Pavo molido", emoji: "\uD83E\uDD83", protein: 29, cal: 189, per: "100g" },
-  { name: "Edamame", emoji: "\uD83C\uDF31", protein: 17, cal: 188, per: "1 taza" },
-  { name: "Lentejas", emoji: "\uD83C\uDF72", protein: 18, cal: 230, per: "1 taza cocida" },
-  { name: "Camaron", emoji: "\uD83E\uDD90", protein: 24, cal: 99, per: "100g" },
+  { name: "Pechuga de pollo", emoji: "\uD83C\uDF57", protein: 31, cal: 165, fat: 3.6, carbs: 0, per: "100g" },
+  { name: "Atun en agua", emoji: "\uD83D\uDC1F", protein: 30, cal: 132, fat: 1, carbs: 0, per: "100g" },
+  { name: "Huevo entero", emoji: "\uD83E\uDD5A", protein: 6, cal: 78, fat: 5, carbs: 0.6, per: "1 pieza" },
+  { name: "Claras de huevo", emoji: "\uD83C\uDF73", protein: 11, cal: 52, fat: 0.2, carbs: 0.7, per: "3 claras" },
+  { name: "Yogur griego", emoji: "\uD83E\uDD5B", protein: 17, cal: 100, fat: 0.7, carbs: 6, per: "1 taza" },
+  { name: "Salmon", emoji: "\uD83D\uDC20", protein: 25, cal: 208, fat: 13, carbs: 0, per: "100g" },
+  { name: "Queso cottage", emoji: "\uD83E\uDDC0", protein: 14, cal: 110, fat: 5, carbs: 3, per: "1/2 taza" },
+  { name: "Pavo molido", emoji: "\uD83E\uDD83", protein: 29, cal: 189, fat: 10, carbs: 0, per: "100g" },
+  { name: "Camaron", emoji: "\uD83E\uDD90", protein: 24, cal: 99, fat: 1.7, carbs: 0.9, per: "100g" },
+  { name: "Sardinas en agua", emoji: "\uD83D\uDC1F", protein: 25, cal: 150, fat: 6, carbs: 0, per: "100g" },
+  { name: "Carne molida 90pct", emoji: "\uD83E\uDD69", protein: 20, cal: 176, fat: 10, carbs: 0, per: "100g" },
+  { name: "Queso panela", emoji: "\uD83E\uDDC0", protein: 19, cal: 291, fat: 22, carbs: 3, per: "100g" },
 ];
 
 const COMMON_FOODS = [
@@ -163,8 +163,10 @@ export default function ContadorCalorias() {
   var _useState24 = useState(""); var calcError = _useState24[0]; var setCalcError = _useState24[1];
   var _useState25 = useState(""); var calcSearch = _useState25[0]; var setCalcSearch = _useState25[1];
   var _useState26 = useState(null); var calcSelected = _useState26[0]; var setCalcSelected = _useState26[1];
-  var dailyGoal = 2400;
-  var proteinGoal = 133;
+  var dailyGoal = 1800;
+  var proteinGoal = 130;
+  var fatGoal = 80;
+  var carbGoal = 45;
   var inputRef = useRef(null);
   var photoInputRef = useRef(null);
   var cameraInputRef = useRef(null);
@@ -221,6 +223,10 @@ export default function ContadorCalorias() {
   var totalFat = dishes.reduce(function(s, d) { return s + (d.fat || 0); }, 0);
   var proteinPct = Math.min((totalProtein / proteinGoal) * 100, 100);
   var proteinColor = totalProtein < proteinGoal * 0.5 ? "#EF4444" : totalProtein < proteinGoal ? "#F59E0B" : "#3B82F6";
+  var fatPct = Math.min((totalFat / fatGoal) * 100, 100);
+  var fatColor = totalFat > fatGoal ? "#E63946" : totalFat > fatGoal * 0.8 ? "#F59E0B" : "#52B788";
+  var carbPct = Math.min((totalCarbs / carbGoal) * 100, 100);
+  var carbColor = totalCarbs > carbGoal ? "#E63946" : totalCarbs > carbGoal * 0.8 ? "#F59E0B" : "#52B788";
   var progressPct = Math.min((netCalories / adjustedGoal) * 100, 100);
   var progressColor = netCalories < adjustedGoal * 0.6 ? "#52B788" : netCalories < adjustedGoal ? "#F4A261" : "#E63946";
 
@@ -403,7 +409,7 @@ export default function ContadorCalorias() {
   function buildSummaryText() {
     var lines = ["RESUMEN DEL DIA", getToday(), "---"];
     lines.push("Calorias: " + totalCaloriesIn + (totalBurned > 0 ? " | Quemadas: -" + totalBurned + " | Netas: " + netCalories : "") + " / " + adjustedGoal + " kcal");
-    lines.push("Proteina: " + totalProtein + "/" + proteinGoal + "g | Carbos: " + totalCarbs + "g | Grasa: " + totalFat + "g");
+    lines.push("Proteina: " + totalProtein + "/" + proteinGoal + "g | Carbos: " + totalCarbs + "/" + carbGoal + "g | Grasa: " + totalFat + "/" + fatGoal + "g");
     lines.push("---");
     MEAL_TIMES.forEach(function(mt) {
       var mds = dishesByMeal[mt.id];
@@ -667,6 +673,30 @@ export default function ContadorCalorias() {
                 </div>
                 <div style={{ fontSize: 11, color: C.muted, textAlign: "right", marginBottom: 12 }}>
                   {totalProtein < proteinGoal ? "Faltan " + (proteinGoal - totalProtein) + "g proteina" : "Meta de proteina alcanzada!"}
+                </div>
+
+                {/* Grasa */}
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                  <span style={{ fontWeight: 600, fontSize: 13 }}>Grasa</span>
+                  <span style={{ fontWeight: 700, fontSize: 18, color: fatColor }}>{totalFat}g <span style={{ fontSize: 11, color: C.muted }}>/ {fatGoal}g</span></span>
+                </div>
+                <div style={{ height: 8, background: C.border, borderRadius: 6, overflow: "hidden", marginBottom: 4 }}>
+                  <div style={{ height: "100%", width: fatPct + "%", background: fatColor, borderRadius: 6, transition: "width 0.4s" }} />
+                </div>
+                <div style={{ fontSize: 11, color: C.muted, textAlign: "right", marginBottom: 12 }}>
+                  {totalFat <= fatGoal ? "Faltan " + (fatGoal - totalFat) + "g de grasa" : "Superaste grasa por " + (totalFat - fatGoal) + "g"}
+                </div>
+
+                {/* Carbos */}
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                  <span style={{ fontWeight: 600, fontSize: 13 }}>Carbos netos</span>
+                  <span style={{ fontWeight: 700, fontSize: 18, color: carbColor }}>{totalCarbs}g <span style={{ fontSize: 11, color: C.muted }}>/ {carbGoal}g</span></span>
+                </div>
+                <div style={{ height: 8, background: C.border, borderRadius: 6, overflow: "hidden", marginBottom: 4 }}>
+                  <div style={{ height: "100%", width: carbPct + "%", background: carbColor, borderRadius: 6, transition: "width 0.4s" }} />
+                </div>
+                <div style={{ fontSize: 11, color: C.muted, textAlign: "right", marginBottom: 12 }}>
+                  {totalCarbs <= carbGoal ? "Faltan " + (carbGoal - totalCarbs) + "g de carbos" : "Superaste carbos por " + (totalCarbs - carbGoal) + "g"}
                 </div>
                 <div style={{ display: "flex", gap: 6, paddingTop: 10, borderTop: "1px solid " + C.border }}>
                   {[{ l: "Carbos", v: totalCarbs + "g", c: "#F59E0B" }, { l: "Grasa", v: totalFat + "g", c: "#EF4444" }, { l: "Quemadas", v: totalBurned, c: "#F59E0B" }, { l: "Platillos", v: dishes.length, c: C.primary }].map(function(m) {
@@ -1002,7 +1032,7 @@ export default function ContadorCalorias() {
                     <span style={{ fontSize: 24 }}>{food.emoji}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 1 }}>{food.name}</div>
-                      <div style={{ fontSize: 10, color: C.muted, marginBottom: 4 }}>{food.per} - {food.cal} kcal</div>
+                      <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>{food.per} · {food.cal} kcal · {food.fat}g grasa · {food.carbs}g carbos</div>
                       <div style={{ height: 4, background: C.border, borderRadius: 3, overflow: "hidden" }}>
                         <div style={{ height: "100%", width: Math.min(pct, 100) + "%", background: "#3B82F6", borderRadius: 3 }} />
                       </div>
@@ -1017,7 +1047,7 @@ export default function ContadorCalorias() {
             </div>
             <div style={{ margin: "13px 0 4px", padding: "11px 13px", background: "#EFF6FF", borderRadius: 11, borderLeft: "4px solid #3B82F6" }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: "#1D4ED8", marginBottom: 3 }}>Consejo para tu objetivo</div>
-              <div style={{ fontSize: 11, color: "#1E40AF", lineHeight: 1.5 }}>Distribuye tu proteina en 4 comidas (~33g cada una). Consume proteina dentro de los 30 min post-entrenamiento para mejor recuperacion muscular.</div>
+              <div style={{ fontSize: 11, color: "#1E40AF", lineHeight: 1.5 }}>Con tu dieta de deficit calorico (1,800 kcal), distribuye tus 130g de proteina en 4 comidas (~33g cada una). Prioriza proteinas magras para mantenerte en tu meta de 80g de grasa. Los carbos netos de 45g al dia favorecen la quema de grasa — prefiere verduras, aguacate y nueces como fuente de energia.</div>
             </div>
           </>
         )}

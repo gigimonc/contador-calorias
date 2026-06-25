@@ -99,45 +99,39 @@ function formatDateShort(key) {
   return d.toLocaleDateString("es-MX", { weekday: "short", day: "numeric" });
 }
 
-function WeeklyChart(props) {
-  var data = props.data;
-  var dailyGoal = props.dailyGoal;
+function WeeklyChart({ data, dailyGoal }) {
   var maxVal = Math.max.apply(null, data.map(function(d) { return Math.max(d.net, d.burned, 10); }).concat([dailyGoal]));
   var barW = 32;
   var chartH = 140;
   var pad = 10;
   var goalY = pad + chartH - (dailyGoal / maxVal) * chartH;
   return (
-    React.createElement("div", { style: { overflowX: "auto" } },
-      React.createElement("svg", { width: data.length * (barW + 12) + pad * 2, height: chartH + 50, style: { display: "block" } },
-        React.createElement("line", { x1: pad, x2: data.length * (barW + 12) + pad, y1: goalY, y2: goalY, stroke: "#E63946", strokeDasharray: "4,3", strokeWidth: 1.5 }),
-        React.createElement("text", { x: pad + 2, y: goalY - 4, fontSize: 9, fill: "#E63946" }, "meta"),
-        data.map(function(d, i) {
+    <div style={{ overflowX: "auto" }}>
+      <svg width={data.length * (barW + 12) + pad * 2} height={chartH + 50} style={{ display: "block" }}>
+        <line x1={pad} x2={data.length * (barW + 12) + pad} y1={goalY} y2={goalY} stroke="#E63946" strokeDasharray="4,3" strokeWidth={1.5} />
+        <text x={pad + 2} y={goalY - 4} fontSize={9} fill="#E63946">meta</text>
+        {data.map(function(d, i) {
           var x = pad + i * (barW + 12);
           var netH = Math.max((d.net / maxVal) * chartH, 2);
           var burnH = Math.max((d.burned / maxVal) * chartH, d.burned > 0 ? 2 : 0);
           var netColor = d.net === 0 ? "#E5E7EB" : d.net <= dailyGoal ? "#52B788" : "#E63946";
           var isToday = d.key === getTodayKey();
-          return React.createElement("g", { key: d.key },
-            React.createElement("rect", { x: x, y: pad + chartH - netH, width: barW, height: netH, fill: netColor, rx: 4, opacity: isToday ? 1 : 0.75 }),
-            burnH > 0 ? React.createElement("rect", { x: x, y: pad + chartH - netH - burnH, width: barW, height: burnH, fill: "#F59E0B", rx: 4, opacity: 0.85 }) : null,
-            isToday ? React.createElement("rect", { x: x, y: pad + chartH + 4, width: barW, height: 3, fill: "#2D6A4F", rx: 2 }) : null,
-            React.createElement("text", { x: x + barW / 2, y: pad + chartH + 18, textAnchor: "middle", fontSize: 9, fill: "#6B7280" }, formatDateShort(d.key)),
-            d.net > 0 ? React.createElement("text", { x: x + barW / 2, y: pad + chartH - netH - burnH - 4, textAnchor: "middle", fontSize: 8, fill: "#1A1A2E" }, d.net) : null
+          return (
+            <g key={d.key}>
+              <rect x={x} y={pad + chartH - netH} width={barW} height={netH} fill={netColor} rx={4} opacity={isToday ? 1 : 0.75} />
+              {burnH > 0 && <rect x={x} y={pad + chartH - netH - burnH} width={barW} height={burnH} fill="#F59E0B" rx={4} opacity={0.85} />}
+              {isToday && <rect x={x} y={pad + chartH + 4} width={barW} height={3} fill="#2D6A4F" rx={2} />}
+              <text x={x + barW / 2} y={pad + chartH + 18} textAnchor="middle" fontSize={9} fill="#6B7280">{formatDateShort(d.key)}</text>
+              {d.net > 0 && <text x={x + barW / 2} y={pad + chartH - netH - burnH - 4} textAnchor="middle" fontSize={8} fill="#1A1A2E">{d.net}</text>}
+            </g>
           );
-        })
-      ),
-      React.createElement("div", { style: { display: "flex", gap: 16, marginTop: 6, fontSize: 11, color: "#6B7280" } },
-        React.createElement("span", null,
-          React.createElement("span", { style: { display: "inline-block", width: 10, height: 10, background: "#52B788", borderRadius: 2, marginRight: 4 } }),
-          "Calorias ingeridas"
-        ),
-        React.createElement("span", null,
-          React.createElement("span", { style: { display: "inline-block", width: 10, height: 10, background: "#F59E0B", borderRadius: 2, marginRight: 4 } }),
-          "Calorias quemadas"
-        )
-      )
-    )
+        })}
+      </svg>
+      <div style={{ display: "flex", gap: 16, marginTop: 6, fontSize: 11, color: "#6B7280" }}>
+        <span><span style={{ display: "inline-block", width: 10, height: 10, background: "#52B788", borderRadius: 2, marginRight: 4 }} />Calorias ingeridas</span>
+        <span><span style={{ display: "inline-block", width: 10, height: 10, background: "#F59E0B", borderRadius: 2, marginRight: 4 }} />Calorias quemadas</span>
+      </div>
+    </div>
   );
 }
 

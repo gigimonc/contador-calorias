@@ -81,7 +81,13 @@ const CALORIE_COLORS = [
 function getCalorieLevel(cal) {
   return CALORIE_COLORS.find(function(c) { return cal <= c.max; }) || CALORIE_COLORS[3];
 }
-function getTodayKey() { return new Date().toISOString().slice(0, 10); }
+function getTodayKey() {
+  var d = new Date();
+  var year = d.getFullYear();
+  var month = String(d.getMonth() + 1).padStart(2, "0");
+  var day = String(d.getDate()).padStart(2, "0");
+  return year + "-" + month + "-" + day;
+}
 function getToday() {
   return new Date().toLocaleDateString("es-MX", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 }
@@ -90,7 +96,10 @@ function getLast7Days() {
   for (var i = 6; i >= 0; i--) {
     var d = new Date();
     d.setDate(d.getDate() - i);
-    days.push(d.toISOString().slice(0, 10));
+    var year = d.getFullYear();
+    var month = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    days.push(year + "-" + month + "-" + day);
   }
   return days;
 }

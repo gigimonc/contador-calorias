@@ -176,6 +176,7 @@ export default function ContadorCalorias() {
   var proteinGoal = 120;
   var fatGoal = 65;
   var carbGoal = 80;
+  var fiberGoal = 30;
   var inputRef = useRef(null);
   var photoInputRef = useRef(null);
   var cameraInputRef = useRef(null);
@@ -230,6 +231,9 @@ export default function ContadorCalorias() {
   var totalProtein = dishes.reduce(function(s, d) { return s + (d.protein || 0); }, 0);
   var totalCarbs = dishes.reduce(function(s, d) { return s + (d.carbs || 0); }, 0);
   var totalFat = dishes.reduce(function(s, d) { return s + (d.fat || 0); }, 0);
+  var totalFiber = dishes.reduce(function(s, d) { return s + (d.fiber || 0); }, 0);
+  var fiberPct = Math.min((totalFiber / fiberGoal) * 100, 100);
+  var fiberColor = totalFiber >= fiberGoal ? "#52B788" : totalFiber >= fiberGoal * 0.6 ? "#F59E0B" : "#EF4444";
   var proteinPct = Math.min((totalProtein / proteinGoal) * 100, 100);
   var proteinColor = totalProtein < proteinGoal * 0.5 ? "#EF4444" : totalProtein < proteinGoal ? "#F59E0B" : "#3B82F6";
   var fatPct = Math.min((totalFat / fatGoal) * 100, 100);
@@ -418,7 +422,7 @@ export default function ContadorCalorias() {
   function buildSummaryText() {
     var lines = ["RESUMEN DEL DIA", getToday(), "---"];
     lines.push("Calorias: " + totalCaloriesIn + (totalBurned > 0 ? " | Quemadas: -" + totalBurned + " | Netas: " + netCalories : "") + " / " + adjustedGoal + " kcal");
-    lines.push("Proteina: " + totalProtein + "/" + proteinGoal + "g | Carbos: " + totalCarbs + "/" + carbGoal + "g | Grasa: " + totalFat + "/" + fatGoal + "g");
+    lines.push("Proteina: " + totalProtein + "/" + proteinGoal + "g | Carbos: " + totalCarbs + "/" + carbGoal + "g | Grasa: " + totalFat + "/" + fatGoal + "g | Fibra: " + totalFiber + "/" + fiberGoal + "g");
     lines.push("---");
     MEAL_TIMES.forEach(function(mt) {
       var mds = dishesByMeal[mt.id];
@@ -707,6 +711,18 @@ export default function ContadorCalorias() {
                 <div style={{ fontSize: 11, color: C.muted, textAlign: "right", marginBottom: 12 }}>
                   {totalCarbs <= carbGoal ? "Faltan " + (carbGoal - totalCarbs) + "g de carbos" : "Superaste carbos por " + (totalCarbs - carbGoal) + "g"}
                 </div>
+
+                {/* Fibra */}
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                  <span style={{ fontWeight: 600, fontSize: 13 }}>Fibra</span>
+                  <span style={{ fontWeight: 700, fontSize: 18, color: fiberColor }}>{totalFiber}g <span style={{ fontSize: 11, color: C.muted }}>/ {fiberGoal}g</span></span>
+                </div>
+                <div style={{ height: 8, background: C.border, borderRadius: 6, overflow: "hidden", marginBottom: 4 }}>
+                  <div style={{ height: "100%", width: fiberPct + "%", background: fiberColor, borderRadius: 6, transition: "width 0.4s" }} />
+                </div>
+                <div style={{ fontSize: 11, color: C.muted, textAlign: "right", marginBottom: 12 }}>
+                  {totalFiber < fiberGoal ? "Faltan " + (fiberGoal - totalFiber) + "g de fibra" : "Meta de fibra alcanzada!"}
+                </div>
                 <div style={{ display: "flex", gap: 6, paddingTop: 10, borderTop: "1px solid " + C.border }}>
                   {[{ l: "Carbos", v: totalCarbs + "g", c: "#F59E0B" }, { l: "Grasa", v: totalFat + "g", c: "#EF4444" }, { l: "Quemadas", v: totalBurned, c: "#F59E0B" }, { l: "Platillos", v: dishes.length, c: C.primary }].map(function(m) {
                     return (
@@ -804,7 +820,7 @@ export default function ContadorCalorias() {
                               </div>
                               <div style={{ fontSize: 10, color: C.muted, marginBottom: 5 }}>Porcion: {dish.portion}</div>
                               <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-                                {[{ l: "Prot", v: dish.protein, c: "#3B82F6" }, { l: "Carbos", v: dish.carbs, c: "#F59E0B" }, { l: "Grasa", v: dish.fat, c: "#EF4444" }].map(function(m) {
+                                {[{ l: "Prot", v: dish.protein, c: "#3B82F6" }, { l: "Carbos", v: dish.carbs, c: "#F59E0B" }, { l: "Grasa", v: dish.fat, c: "#EF4444" }, { l: "Fibra", v: dish.fiber || 0, c: "#52B788" }].map(function(m) {
                                   return <span key={m.l} style={{ fontSize: 10, background: C.bg, borderRadius: 5, padding: "2px 6px", color: C.muted }}><span style={{ color: m.c, fontWeight: 700 }}>{m.v}g</span> {m.l}</span>;
                                 })}
                               </div>

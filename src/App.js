@@ -172,10 +172,10 @@ export default function ContadorCalorias() {
   var _useState24 = useState(""); var calcError = _useState24[0]; var setCalcError = _useState24[1];
   var _useState25 = useState(""); var calcSearch = _useState25[0]; var setCalcSearch = _useState25[1];
   var _useState26 = useState(null); var calcSelected = _useState26[0]; var setCalcSelected = _useState26[1];
-  var dailyGoal = 1800;
-  var proteinGoal = 130;
-  var fatGoal = 80;
-  var carbGoal = 45;
+  var dailyGoal = 1600;
+  var proteinGoal = 120;
+  var fatGoal = 65;
+  var carbGoal = 80;
   var inputRef = useRef(null);
   var photoInputRef = useRef(null);
   var cameraInputRef = useRef(null);

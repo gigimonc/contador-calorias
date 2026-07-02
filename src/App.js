@@ -538,7 +538,7 @@ export default function ContadorCalorias() {
                 <span style={{ fontSize: 20 }}>&#x1F957;</span>
                 <h1 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>Contador de Calorias</h1>
               </div>
-              <p style={{ margin: 0, opacity: 0.75, fontSize: 11 }}>Meta: 2,400 kcal - 133g proteina / dia</p>
+              <p style={{ margin: 0, opacity: 0.75, fontSize: 11 }}>Meta: 1,600 kcal - 133g proteina / dia</p>
             </div>
             <div style={{ display: "flex", gap: 5 }}>
               {history.length > 0 && (
